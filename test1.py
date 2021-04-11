@@ -1,3 +1,5 @@
+#https://realpython.com/python-sockets/
+
 # Importing the library
 import pygame
 from math import *
@@ -14,7 +16,7 @@ pygame.display.set_caption("test program")
 surface = pygame.display.set_mode((800,600))
 
 # Initialing Color
-color = (50,200,0)
+color = (232,128,173)
 
 running = True
 
