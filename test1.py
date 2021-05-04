@@ -16,6 +16,7 @@ surface = pygame.display.set_mode((800,600))
 # Initialing Color
 color = (50,200,0)
 
+
 running = True
 
 def draw_ngon(Surface, color, n, radius, position):
