@@ -39,6 +39,7 @@ while running:
 		if event.type == pygame.QUIT:
 			# change the value to False, to exit the main loop
 			running = False
+			pygame.quit()
 	
 	
 	pygame.event.get()
