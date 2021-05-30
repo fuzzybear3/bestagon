@@ -4,6 +4,9 @@
 import pygame
 from network import Network
 from math import *
+from Player import Player
+
+
 
 
 # Initializing Pygame
@@ -18,7 +21,9 @@ pygame.display.set_caption("test program")
 surface = pygame.display.set_mode((800,600))
 
 # Initialing Color
-color = (232,128,173)
+#color = (232,128,173)
+#color = (24,60,200)
+
 
 def draw_ngon(Surface, color, n, radius, position):
     pi2 = 2 * 3.14
@@ -32,19 +37,11 @@ def draw_ngon(Surface, color, n, radius, position):
           [(cos(i / n * pi2) * radius + position[0], sin(i / n * pi2) * radius + position[1]) for i in range(0, n)])
 
 
-def read_pos(str):
-	str = str.split(",")
-	return int(str[0]), int(str[1])
-
-
-def make_pos(tup):
-	return str(tup[0]) + "," + str(tup[1])
-
-
 
 running = True
 n = Network()
-
+P = n.getP()
+print(P)
 
 while running:
 	# event handling, gets all event from the event queue
@@ -63,12 +60,12 @@ while running:
 	mouse = pygame.mouse.get_pressed()
 	
 	if mouse[0] == True:
-		pos = pygame.mouse.get_pos()
-		serverData = n.send(make_pos(pos))
+		P.pos = pygame.mouse.get_pos()
+		players = n.send(P)
 		#pygame.draw.rect(surface, color, pygame.Rect(pos[0], pos[1], 5, 5))
-		draw_ngon(surface, color, 6, 10, pos)
-		for x in serverData:
-			draw_ngon(surface, color, 6, 10, x)
+		draw_ngon(surface, P.color, 6, 10, P.pos)
+		for x in players:
+			draw_ngon(surface, x.color, 6, 10, x.pos)
 		pygame.display.flip()
 
 	elif mouse[1] == True:
@@ -81,8 +78,8 @@ while running:
 		pygame.display.flip()
 
 	else:
-		serverData = n.send("ping")
-		print(serverData)
-		for x in serverData:
-			draw_ngon(surface, color, 6, 10, x)
+		players = n.send(P)
+		print(players)
+		for x in players:
+			draw_ngon(surface, x.color, 6, 10, x.pos)
 		pygame.display.flip()

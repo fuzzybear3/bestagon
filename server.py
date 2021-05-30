@@ -2,8 +2,8 @@ import socket
 from _thread import *
 import sys
 import pickle
-
-
+from Player import Player
+import random
 
 MAX_CLIENTS = 5
 server = "192.168.1.155"
@@ -11,15 +11,13 @@ port = 5555
 
 
 
-lastPos = []
+players = []
 IDs = []
 for x in range(MAX_CLIENTS):
     IDs.append(x)
-    lastPos.append((0,0))
-clients = []
-gameStatBuffer = []
+    color = (random.randint(0, 255),random.randint(0, 255),random.randint(0, 255))
+    players.append(Player(color))
 
-print(lastPos)
 
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -71,22 +69,23 @@ def threaded_client_old(conn):
 
 
 
-def threaded_client(conn, ID):
 
-    posData = ""
+
+
+
+def threaded_client(conn, ID):
+    conn.send(pickle.dumps(players[ID]))
     while True:
         try:
-            data = conn.recv(2048)
-            posData = data.decode("utf-8")
+            playerData = pickle.loads(conn.recv(2048))
+            players[ID] = playerData
 
-            if not data:
+            if not playerData:
                 print("Disconnected")
                 break
             else:
-                if posData != "ping":
-                    print("Received:  ", posData)
-                    lastPos[ID] = read_pos(posData)
-            conn.sendall(pickle.dumps(lastPos))
+                print("Received:  ", playerData)
+            conn.sendall(pickle.dumps(players))
         except:
             break
     
@@ -97,40 +96,9 @@ def threaded_client(conn, ID):
     conn.close()
 
 
-def distributer():
-    mesg = ""
-    while True:
-        try:
-            Datlist = ["yousuck","dick","andvagina"]
-            print(clients[0])
-            for x in clients:
-                print("bob")
-                data = x.recv(2048)
-                print("fuuuuck")
-                mesg = data.decode("utf-8")
-                print("Received:  ", mesg)
-
-            if not data:
-                print("Disconnected")
-            else:
-                print("Received:  ", mesg)
-                
-            #conn.sendall(str.encode(clients[0]))
-        except:
-            print("Lost connection")
-            conn.close()
-    
-    
-#conn, addr = s.accept()
-#conn.send(str.encode("Connected"))
-#print("Connected to: ", addr)
-#clients.append(conn)
-#start_new_thread(distributer, ())
-
 
 while True:
     conn, addr = s.accept()
     newId = IDs.pop(0)
-    conn.send(str.encode(str(newId)))
     start_new_thread(threaded_client, (conn, newId,))
     print("Connected to: ", addr)
