@@ -6,17 +6,22 @@ from Player import Player
 import random
 
 MAX_CLIENTS = 5
+MAX_BUFFER = 40
 server = "192.168.1.155"
 port = 5555
 
 
 
 players = []
+defaltPlayers = []
 IDs = []
 for x in range(MAX_CLIENTS):
     IDs.append(x)
     color = (random.randint(0, 255),random.randint(0, 255),random.randint(0, 255))
-    players.append(Player(color))
+    temp = []
+    temp.append(Player(color))
+    players.append(temp)
+    defaltPlayers.append(Player(color))
 
 
 
@@ -34,52 +39,37 @@ print("waiting for a conection, server started")
 
 
 
-def threaded_client_old(conn):
-    conn.send(str.encode("Connected"))
-
-    reply = ""
-    while True:
-        try:
-            data = conn.recv(2048)
-            reply = data.decode("utf-8")
-
-            if not data:
-                print("Disconnected")
-                break
-            else:
-                
-                print("Received:  ", reply)
-                print("Sending: ", reply)
-
-            conn.sendall(str.encode("steven"))
-        except:
-            break
-    
-    print("Lost connection")
-    conn.close()
 
 
-
-
+def ingresData(playerData):
+    for x in range(0, MAX_CLIENTS):
+        if len(players[x]) > MAX_BUFFER:
+            players[x].pop()
+        players[x].append(playerData)
 
 
 
 def threaded_client(conn, ID):
-    conn.send(pickle.dumps(players[ID]))
+    conn.send(pickle.dumps(defaltPlayers[ID]))
+    #empty buffer
+    players[ID].clear()
     while True:
         try:
             recivedData = conn.recv(2048)
-            print(recivedData)
-            playerData = pickle.loads(recivedData)
-            players[ID] = playerData
+            #print(recivedData)
+            if recivedData != str.encode("ping"):
+                playerData = pickle.loads(recivedData)
+                ingresData(playerData)
 
-            if not playerData:
+            if not recivedData:
                 print("Disconnected")
                 break
             else:
                 #print("Received:  ", playerData)
                 pass
-            conn.sendall(pickle.dumps(players))
+            conn.sendall(pickle.dumps(players[ID]))
+            players[ID].clear()
+            
         except:
             break
     

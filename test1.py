@@ -48,7 +48,7 @@ clock = pygame.time.Clock()
 
 while running:
 
-	clock.tick(400)
+	clock.tick(1500)
 	# event handling, gets all event from the event queue
 	for event in pygame.event.get():
 		# only do something if the event is of type QUIT
@@ -67,6 +67,7 @@ while running:
 	if mouse[0] == True:
 		P.pos = pygame.mouse.get_pos()
 		players = n.send(P)
+		
 		#pygame.draw.rect(surface, color, pygame.Rect(pos[0], pos[1], 5, 5))
 		#draw_ngon(surface, P.color, 6, 10, P.pos)
 		pygame.draw.circle(surface, P.color, P.pos, CIRCLE_SIZE)
