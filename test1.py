@@ -7,7 +7,8 @@ from math import *
 from Player import Player
 
 
-
+#Settings
+CIRCLE_SIZE = 8
 
 # Initializing Pygame
 pygame.init()
@@ -41,9 +42,13 @@ def draw_ngon(Surface, color, n, radius, position):
 running = True
 n = Network()
 P = n.getP()
-print(P)
+
+clock = pygame.time.Clock()
+#print(P)
 
 while running:
+
+	clock.tick(400)
 	# event handling, gets all event from the event queue
 	for event in pygame.event.get():
 		# only do something if the event is of type QUIT
@@ -63,9 +68,11 @@ while running:
 		P.pos = pygame.mouse.get_pos()
 		players = n.send(P)
 		#pygame.draw.rect(surface, color, pygame.Rect(pos[0], pos[1], 5, 5))
-		draw_ngon(surface, P.color, 6, 10, P.pos)
+		#draw_ngon(surface, P.color, 6, 10, P.pos)
+		pygame.draw.circle(surface, P.color, P.pos, CIRCLE_SIZE)
 		for x in players:
-			draw_ngon(surface, x.color, 6, 10, x.pos)
+			#draw_ngon(surface, x.color, 6, 10, x.pos)
+			pygame.draw.circle(surface, x.color, x.pos, CIRCLE_SIZE)
 		pygame.display.flip()
 
 	elif mouse[1] == True:
@@ -78,8 +85,9 @@ while running:
 		pygame.display.flip()
 
 	else:
-		players = n.send(P)
-		print(players)
+		players = n.Ping_get_data("ping")
+		#print(players)
 		for x in players:
-			draw_ngon(surface, x.color, 6, 10, x.pos)
+			#draw_ngon(surface, x.color, 6, 10, x.pos)
+			pygame.draw.circle(surface, x.color, x.pos, CIRCLE_SIZE)
 		pygame.display.flip()

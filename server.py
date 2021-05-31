@@ -32,15 +32,6 @@ s.listen(MAX_CLIENTS)
 print("waiting for a conection, server started")
 
 
-def read_pos(str):
-	str = str.split(",")
-	return int(str[0]), int(str[1])
-
-
-def make_pos(tup):
-	return str(tup[0]) + "," + str(tup[1])
-
-
 
 
 def threaded_client_old(conn):
@@ -77,14 +68,17 @@ def threaded_client(conn, ID):
     conn.send(pickle.dumps(players[ID]))
     while True:
         try:
-            playerData = pickle.loads(conn.recv(2048))
+            recivedData = conn.recv(2048)
+            print(recivedData)
+            playerData = pickle.loads(recivedData)
             players[ID] = playerData
 
             if not playerData:
                 print("Disconnected")
                 break
             else:
-                print("Received:  ", playerData)
+                #print("Received:  ", playerData)
+                pass
             conn.sendall(pickle.dumps(players))
         except:
             break
